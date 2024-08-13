@@ -1,5 +1,6 @@
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import net.harawata.appdirs.AppDirsFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
@@ -10,7 +11,11 @@ data class GameStats(val attempts: List<Int>, val secretNumber: Int, val guesses
 data class GameHistory(val games: MutableList<GameStats>)
 
 fun main(args: Array<String>) {
-    val configPath = "config.json"
+    val appDirs = AppDirsFactory.getInstance()
+    val configDir = appDirs.getUserConfigDir("KusGuessingGame", "0.1.1", "Kushal Hada")
+    val dataDir = appDirs.getUserDataDir("KusGuessingGame", "0.1.1", "Kushal Hada")
+
+    val configPath = "$configDir/config.json"
     val config = if (File(configPath).exists()) {
         Gson().fromJson(File(configPath).readText(), Config::class.java)
     } else {
@@ -21,15 +26,16 @@ fun main(args: Array<String>) {
         println("Do you consent to analytics? (yes/no)")
         val consent = readLine() ?: "no"
         val updatedConfig = config.copy(analyticsConsent = consent.lowercase() in listOf("yes", "y"))
+        File(configDir).mkdirs()
         File(configPath).writeText(Gson().toJson(updatedConfig))
         println("Consent updated successfully.")
         return
     }
 
-    playGuessingGame(config.analyticsConsent)
+    playGuessingGame(config.analyticsConsent, dataDir)
 }
 
-fun playGuessingGame(analyticsConsent: Boolean) {
+fun playGuessingGame(analyticsConsent: Boolean, dataDir: String) {
     println("Guess the number!")
     println("Remember, you can update your consent by running this application with the --update-consent flag.")
 
@@ -60,9 +66,9 @@ fun playGuessingGame(analyticsConsent: Boolean) {
                 println("Guesses: $guesses")
 
                 val gameStats = GameStats(attempts, secretNumber, guesses)
-                saveGameStats(gameStats)
+                saveGameStats(gameStats, dataDir)
 
-                val gameHistory = readGameHistory()
+                val gameHistory = readGameHistory(dataDir)
                 println("All Games History:")
                 gameHistory.games.forEachIndexed { index, game ->
                     println("Game ${index + 1}: Attempts: ${game.attempts}, Secret Number: ${game.secretNumber}, Guesses: ${game.guesses}")
@@ -73,22 +79,31 @@ fun playGuessingGame(analyticsConsent: Boolean) {
                 break
             }
         }
+
+        val sum = add(guess, secretNumber)
+        println("The sum of your guess and the secret number is: $sum")
+        val product = multiply(guess, secretNumber)
+        println("The product of your guess and the secret number is: $product")
+
+        val gcd = gcd(guess, secretNumber)
+        println("The greatest common divisor of your guess and the secret number is: $gcd")
     }
 }
 
-fun saveGameStats(gameStats: GameStats) {
-    val statsPath = "game_stats.json"
+fun saveGameStats(gameStats: GameStats, dataDir: String) {
+    val statsPath = "$dataDir/game_stats.json"
     val gameHistory = if (File(statsPath).exists()) {
         Gson().fromJson(File(statsPath).readText(), object : TypeToken<GameHistory>() {}.type)
     } else {
         GameHistory(mutableListOf())
     }
     gameHistory.games.add(gameStats)
+    File(dataDir).mkdirs()
     File(statsPath).writeText(Gson().toJson(gameHistory))
 }
 
-fun readGameHistory(): GameHistory {
-    val statsPath = "game_stats.json"
+fun readGameHistory(dataDir: String): GameHistory {
+    val statsPath = "$dataDir/game_stats.json"
     return if (File(statsPath).exists()) {
         Gson().fromJson(File(statsPath).readText(), object : TypeToken<GameHistory>() {}.type)
     } else {
