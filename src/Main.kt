@@ -1,3 +1,5 @@
+package myapp
+
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import net.harawata.appdirs.AppDirsFactory

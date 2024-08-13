@@ -1,6 +1,17 @@
+package myapp
+
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
+
+// Importing functions and classes from the main file
+import myapp.add
+import myapp.multiply
+import myapp.gcd
+import myapp.GameStats
+import myapp.saveGameStats
+import myapp.readGameHistory
+import myapp.fetchHelloWorld
 
 class MainKtTest {
 
@@ -48,4 +59,3 @@ class MainKtTest {
         }
     }
 }
-
