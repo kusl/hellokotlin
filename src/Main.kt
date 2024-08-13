@@ -4,7 +4,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.io.IOException
-import java.util.*
 
 data class Config(val analyticsConsent: Boolean)
 data class GameStats(val attempts: List<Int>, val secretNumber: Int, val guesses: List<Int>)
