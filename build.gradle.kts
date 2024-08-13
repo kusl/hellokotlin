@@ -12,4 +12,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("net.harawata:appdirs:1.2.2")
     implementation("com.squareup.okio:okio:3.4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
