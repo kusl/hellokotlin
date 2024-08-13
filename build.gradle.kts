@@ -11,4 +11,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("net.harawata:appdirs:1.2.2")
+    implementation("com.squareup.okio:okio:3.4.0")
 }
